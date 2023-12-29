@@ -1,15 +1,21 @@
 {
-  "name": "ecash-cli-wallet",
+  "name": "hdwallet",
   "version": "0.0.1",
   "description": "",
   "main": "index.js",
-  "type": "module",
+  "type": "commonjs",
+  "bin": {
+    "hdwallet": "./bin/hdwallet.js",
+    "hdwallet-start": "./bin/hdwalletStart.js"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Amatack",
   "license": "ISC",
   "dependencies": {
-    "commander": "^11.1.0"
+    "colors": "1.4.0",
+    "commander": "11.1.0",
+    "inquirer": "7.3.3"
   }
 }
