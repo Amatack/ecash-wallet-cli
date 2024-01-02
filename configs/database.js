@@ -1,27 +1,27 @@
-async function createConnection() {
-    //const file = join(__Dirname, '../db.json');
+const fs = require('fs').promises;
+
+async function createDatabase() {
+    
     try{
+        const newFolder = 'data';
+
+        await fs.mkdir(newFolder)
+        
+        console.log('Carpeta creada exitosamente:', newFolder);
+        
         const { JSONFilePreset } = await import('lowdb/node')
         // Read or create db.json
-        const defaultData = { posts: [] }
-        const db = await JSONFilePreset('./data/db.json', defaultData)
-        await db.update(({ posts }) => posts.push('hello world'))
-        
-        // Alternatively you can call db.write() explicitely later
-        // to write to db.json
-        db.data.posts.push('hello world')
-        await db.write()
-        console.log(db)
-        
+        const defaultData = { account: [] }
+        const db = await JSONFilePreset('./data/account.json', defaultData)
+        await db.update(({ account }) => account.push('myMnemonic'))
+
+        const defaultData2 = { addresses: [] }
+        const db2 = await JSONFilePreset('./data/addresses.json', defaultData2)
+        await db2.update(({ addresses }) => addresses.push('myFirstAddressForDefault'))
     } catch (error) {
         // Handle the error or initialize a new database if the file doesn't exist
-        console.error('Error reading file:', error);
-
-        // Create a new lowdb instance with an empty object
-        db = new Low({});
-
-        console.log(db);
+        console.error('Error at initialize a new database:', error);
     }
 }
 
-createConnection();
+module.exports = createDatabase;
