@@ -1,12 +1,13 @@
-const program = require('commander')
-/* const Set = require("../commands/Set")
 
-const set = new Set() */
+const program = require('commander')
+const Set = require("../commands/generate")
+
+const set = new Set()
 
 program
     .command('generate')
     .description('Generate new Mnemonic randomly')
-    .action(()=> console.log('Generate new Mnemonic randomly'))
+    .action(set.generate)
     //.action(set.addPlayer)
 
 program
