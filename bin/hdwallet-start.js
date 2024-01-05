@@ -1,6 +1,6 @@
 
 const program = require('commander')
-const Set = require("../commands/generate")
+const Set = require("../commands/hdwalletStart.js")
 
 const set = new Set()
 

@@ -14,13 +14,16 @@
   "author": "Amatack",
   "license": "ISC",
   "dependencies": {
+    "@bitgo/utxo-lib": "^9.27.0",
     "bip32": "^4.0.0",
     "bip39": "^3.1.0",
     "colors": "^1.4.0",
     "commander": "11.1.0",
+    "ecashaddrjs": "^1.5.4",
     "inquirer": "^7.3.3",
     "lowdb": "^7.0.1",
     "tiny-secp256k1": "^2.2.3",
+    "uint8arrays": "^5.0.0",
     "uuid": "^9.0.1"
   }
 }
