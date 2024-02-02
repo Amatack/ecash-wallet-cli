@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 const program = require("commander")
 
-
 program
     .option('-a, --allAddresses', 'select all your Addresses to your action of the command')
 

@@ -5,7 +5,7 @@ const ecc = require('tiny-secp256k1');
 const crypto = require('crypto');
 
 const {BIP32Factory} = require("bip32");
-const log = require('../configs/constants');
+const {log} = require('../configs/constants');
 const createNewWallet = require('../db/createNewWallet');
 
 class Set {

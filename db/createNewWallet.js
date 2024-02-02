@@ -2,13 +2,12 @@ const bip39 = require("bip39");
 const ecc = require('tiny-secp256k1');
 const { BIP32Factory } = require('bip32');
 const utxolib = require('@bitgo/utxo-lib');
-
-
 const ecashaddrjs = require("ecashaddrjs");
 
 
 const crypto = require('crypto');
-const log = require('../configs/constants')
+
+const {log, derivationPath} = require('../configs/constants')
 
 async function createNewWallet(encryptedMnemonic, iv, password) {
     try{
@@ -39,7 +38,7 @@ async function createNewWallet(encryptedMnemonic, iv, password) {
         const bip32 = BIP32Factory(ecc);
         const seedBuffer = bip39.mnemonicToSeedSync(decryptedMnemonic)
         const masterKey = bip32.fromSeed(seedBuffer)
-        const initialDerivationPath = "m/44'/0'/0'/0";
+        const initialDerivationPath = derivationPath
         const publicKey = masterKey.derivePath(initialDerivationPath)
         const legacyAddress = utxolib.payments.p2pkh({ pubkey: publicKey.derive(0).publicKey }).address;
 

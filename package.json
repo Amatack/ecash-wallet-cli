@@ -6,7 +6,9 @@
   "type": "commonjs",
   "bin": {
     "hdwallet": "./bin/hdwallet.js",
-    "hdwallet-start": "./bin/hdwalletStart.js"
+    "hdwallet-add": "./bin/hdwallet-add.js",
+    "hdwallet-start": "./bin/hdwalletStart.js",
+    "hdwallet-balance": "./bin/hdwallet-balance.js"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
