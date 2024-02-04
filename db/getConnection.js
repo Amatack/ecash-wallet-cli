@@ -1,9 +1,11 @@
 async function getConnection(jsonName){
     const { JSONFilePreset } = await import('lowdb/node')
-    const defaultData = { account: [] }
+    const defaultData = {};
+    defaultData[jsonName] = []
     const path = "./data/"
     const extension = ".json"
-    const db = await JSONFilePreset(path+jsonName+extension, defaultData)
+    let completePath = path+jsonName+extension
+    const db = await JSONFilePreset(completePath, defaultData)
     await db.read()
     return db
 }
