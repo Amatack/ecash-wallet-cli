@@ -19,6 +19,7 @@
     "@bitgo/utxo-lib": "^9.27.0",
     "bip32": "^4.0.0",
     "bip39": "^3.1.0",
+    "chronik-client": "^0.14.0",
     "colors": "^1.4.0",
     "commander": "11.1.0",
     "ecashaddrjs": "^1.5.4",
