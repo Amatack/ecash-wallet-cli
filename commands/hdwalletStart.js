@@ -110,7 +110,7 @@ class Set {
 
         const dbAddresses = await getConnection("addresses")
         
-        await dbAddresses.update(({ addresses }) => addresses.push(ecashAddress))
+        await dbAddresses.update(({ addresses }) => addresses.push({alias: "",ecashAddress:ecashAddress}))
         console.log("Db created successfully")
     }
 
