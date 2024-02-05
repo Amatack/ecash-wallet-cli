@@ -28,7 +28,7 @@ async function hdwalletAdd() {
 
     const ecashAddress = ecashaddrjs.encode("ecash", "P2PKH" , uint8array)
         
-    await dbAddresses.update(({ addresses }) => addresses.push(ecashAddress))
+    await dbAddresses.update(({ addresses }) => addresses.push({alias: "",ecashAddress: ecashAddress}))
     log("new wallet added")
 }
 
