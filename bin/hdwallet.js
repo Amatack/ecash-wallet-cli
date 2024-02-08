@@ -10,6 +10,7 @@ program
     .command('add', 'Add a new address to your wallet.')
     .command('balance', 'Get your balance from your selected address.')
     .command('putAlias', 'Put a Alias to your selected address')
+    .command('totalAddresses', 'Total number of addresses generated and registered.')
     .command('send', 'send eCash from your selected address')
     .parse(process.argv)
     
