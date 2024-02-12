@@ -11,6 +11,6 @@ program
     .command('balance', 'Get your balance from your selected address.')
     .command('putAlias', 'Put a Alias to your selected address')
     .command('totalAddresses', 'Total number of addresses generated and registered.')
-    .command('send', 'send eCash from your selected address')
+    .command('sendXec', 'send eCash from your selected address')
     .parse(process.argv)
     
