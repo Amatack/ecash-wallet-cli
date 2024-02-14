@@ -14,7 +14,7 @@ async function hdwalletBalance() {
     const aliasAndAddress =[]  
 
     for(let i = 0; i < db.data.addresses.length; i++){
-        aliasAndAddress[i] = db.data.addresses[i].alias +" "+db.data.addresses[i].ecashAddress
+        aliasAndAddress[i] = db.data.addresses[i].index + " " + db.data.addresses[i].alias +" "+db.data.addresses[i].ecashAddress
     }
 
     const options = [
