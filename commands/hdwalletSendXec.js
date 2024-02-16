@@ -25,10 +25,10 @@ class Set {
             const db = await getConnection("addresses")
             const chronik = new ChronikClient(chronikInstance);
 
-            const aliasAndAddress =[]  
+            const indexAndAddress = []  
 
             for(let i = 0; i < db.data.addresses.length; i++){
-                aliasAndAddress[i] = db.data.addresses[i].index +" "+ db.data.addresses[i].alias +" "+db.data.addresses[i].ecashAddress
+                indexAndAddress[i] = db.data.addresses[i].index +" "+db.data.addresses[i].ecashAddress
             }
 
             const options = [
@@ -36,7 +36,7 @@ class Set {
                     name: "sender",
                     type: "list",
                     message: "From which address do you want to send the funds?: ",
-                    choices: aliasAndAddress
+                    choices: indexAndAddress
                 },
                 {
                     name: "receiver",
@@ -56,9 +56,9 @@ class Set {
             ]
             
             const result = await inquirer.prompt(options)
-            const aliasAndAddressSelected = result.sender.split(" ")
-            const sender = String(aliasAndAddressSelected[aliasAndAddressSelected.length-1])
-            const index = aliasAndAddressSelected[0]
+            const indexAndAddressSelected = result.sender.split(" ")
+            const sender = String(indexAndAddressSelected[indexAndAddressSelected.length-1])
+            const index = indexAndAddressSelected[0]
             
             const {amountOfXec,receiver, password} = result
             if(receiver.length !== 48){

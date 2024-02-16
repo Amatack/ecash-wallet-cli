@@ -29,9 +29,6 @@ program
     .action(setBalance.balance)
 
 program
-    .command('putAlias', 'Put a Alias to your selected address')
-
-program
     .command('totalAddresses')
     .description('Total number of addresses generated and registered.')
     .action(setTotalAddresses.totalAddresses)

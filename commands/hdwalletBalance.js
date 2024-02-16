@@ -41,10 +41,10 @@ class Set {
         
         const chronik = new ChronikClient(chronikInstance);
 
-        const aliasAndAddress =[]  
+        const indexAndAddress =[]  
 
         for(let i = 0; i < db.data.addresses.length; i++){
-            aliasAndAddress[i] = db.data.addresses[i].index + " " + db.data.addresses[i].alias +" "+db.data.addresses[i].ecashAddress
+            indexAndAddress[i] = db.data.addresses[i].index + " " +db.data.addresses[i].ecashAddress
         }
 
         const options = [
@@ -52,13 +52,13 @@ class Set {
                 name: "address",
                 type: "list",
                 message: "Select one wallet: ",
-                choices: aliasAndAddress
+                choices: indexAndAddress
             }
         ]
         
         const result = await inquirer.prompt(options)
-        const aliasAndAddressSelected = result.address.split(" ")
-        const eCashAddress = String(aliasAndAddressSelected[aliasAndAddressSelected.length-1])
+        const indexAndAddressSelected = result.address.split(" ")
+        const eCashAddress = String(indexAndAddressSelected[indexAndAddressSelected.length-1])
         log("eCashAddress", eCashAddress)
         const { type, hash } = ecashaddr.decode(eCashAddress, true); 
         const utxos = await chronik.script(type, hash).utxos();

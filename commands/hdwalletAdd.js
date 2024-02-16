@@ -27,7 +27,7 @@ class Set {
 
         const ecashAddress = ecashaddrjs.encode("ecash", "P2PKH" , uint8array)
             
-        await dbAddresses.update(({ addresses }) => addresses.push({index: NumberOfAddresses, alias: "",ecashAddress: ecashAddress}))
+        await dbAddresses.update(({ addresses }) => addresses.push({index: NumberOfAddresses, ecashAddress: ecashAddress}))
         log("new wallet added")
     }
 }
