@@ -8,7 +8,7 @@
     "hdwallet": "./bin/hdwallet.js",
     "hdwallet-add": "./bin/hdwallet-add.js",
     "hdwallet-start": "./bin/hdwalletStart.js",
-    "hdwallet-balance": "./bin/hdwallet-balance.js",
+    
     "hdwallet-totalAddresses": "./bin/hdwallet-totalAddresses.js"
   },
   "scripts": {
