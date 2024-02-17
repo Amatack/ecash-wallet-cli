@@ -1,4 +1,4 @@
-const utxolib = require('@bitgo/utxo-lib')
+const utxolib = require('../modules/@bitgo/utxo-lib')
 const ecc = require('tiny-secp256k1');
 const {BIP32Factory} = require("bip32");
 const ecashaddrjs = require('ecashaddrjs')

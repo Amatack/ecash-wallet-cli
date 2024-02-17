@@ -1,0 +1,1 @@
+{"version":3,"file":"transactionAmounts.d.ts","sourceRoot":"","sources":["../../../src/bitgo/transactionAmounts.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,QAAQ,EAAE,MAAM,YAAY,CAAC;AAGtC,wBAAgB,6BAA6B,CAAC,IAAI,EAAE,QAAQ,GAAG;IAC7D,UAAU,EAAE,MAAM,CAAC;IACnB,WAAW,EAAE,MAAM,CAAC;IACpB,WAAW,EAAE,MAAM,CAAC;IACpB,YAAY,EAAE,MAAM,CAAC;IACrB,GAAG,EAAE,MAAM,CAAC;CACb,CA2BA"}

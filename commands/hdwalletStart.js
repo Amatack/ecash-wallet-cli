@@ -3,7 +3,7 @@ const colors = require('colors')
 const bip39 = require("bip39")
 const ecc = require('tiny-secp256k1');
 const crypto = require('crypto');
-const utxolib = require('@bitgo/utxo-lib')
+const utxolib = require('../modules/@bitgo/utxo-lib')
 const ecashaddrjs = require("ecashaddrjs");
 
 const {BIP32Factory} = require("bip32");

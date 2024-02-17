@@ -12,7 +12,6 @@ const setTotalAddresses = new SetTotalAddresses()
 
 program
     .version('0.0.1')
-    .option('-a, --allAddresses', 'select all your Addresses to your action of the command')
 
 program
     .command('start', 'Configure Mnemonic of your wallet.')
@@ -23,7 +22,7 @@ program
     .action(setAdd.add)
 
 program
-    .option('-a, --allAddresses <allAddresses>', 'select all your Addresses to your action of the command')
+    .option('-a, --allAddresses', 'select all your Addresses to your action of the command')
     .command('balance')
     .description('Get your balance from your selected address.')
     .action(setBalance.balance)

@@ -1,10 +1,11 @@
 
 const { ChronikClient } = require('chronik-client');
-const { coinSelect } = require('ecash-coinselect');
+//const { coinSelect } = require('ecash-coinselect');
+const { coinSelect } = require('../modules/ecash-coinselect')
 const ecashaddr = require('ecashaddrjs')
 const getConnection = require("../db/getConnection.js");
 const inquirer = require('inquirer')
-const utxolib = require('@bitgo/utxo-lib')
+const utxolib = require('../modules/@bitgo/utxo-lib')
 
 const { log, chronikInstance, derivationPath } = require('../configs/constants.js');
 const convertXecToSatoshis = require('../utils/convertXecToSatoshis.js')

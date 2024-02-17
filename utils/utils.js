@@ -1,6 +1,6 @@
 const bip39 = require('bip39');
 const crypto = require('crypto')
-const utxolib = require('@bitgo/utxo-lib');
+const utxolib = require('../modules/@bitgo/utxo-lib');
 const BigNumber = require('bignumber.js');
 const slpMdm = require('slp-mdm');
 const cashaddr = require ('ecashaddrjs');
