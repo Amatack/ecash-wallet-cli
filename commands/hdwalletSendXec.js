@@ -5,6 +5,7 @@ const { coinSelect } = require('../modules/ecash-coinselect')
 const ecashaddr = require('ecashaddrjs')
 const getConnection = require("../db/getConnection.js");
 const inquirer = require('inquirer')
+const {program} = require('commander')
 const utxolib = require('../modules/@bitgo/utxo-lib')
 
 const { log, chronikInstance, derivationPath } = require('../configs/constants.js');
@@ -15,22 +16,198 @@ const { decryptMnemonic , deriveWallet} = require('../utils/utils.js');
 
 class Set {
     sendXec = async ()=>{
-        try {
+        const HASHTYPES = {
+            SIGHASH_ALL: 0x01,
+            SIGHASH_FORKID: 0x40,
+        };
 
-            const HASHTYPES = {
-                SIGHASH_ALL: 0x01,
-                SIGHASH_FORKID: 0x40,
-            };
-            
+        const dbAddresses = await getConnection("addresses")
+        const chronik = new ChronikClient(chronikInstance);
 
-            const db = await getConnection("addresses")
-            const chronik = new ChronikClient(chronikInstance);
+        const dbAccount = await getConnection("account")
+        const ivData = dbAccount.data.account[0].iv.data
+        const ivBuffer = Buffer.from(ivData);
+        const encryptedMnemonic = dbAccount.data.account[0].mnemonic
+        const indexAndAddress = []  
 
-            const indexAndAddress = []  
+        for(let i = 0; i < dbAddresses.data.addresses.length; i++){
+            indexAndAddress[i] = dbAddresses.data.addresses[i].index +" "+dbAddresses.data.addresses[i].ecashAddress
+        }
 
-            for(let i = 0; i < db.data.addresses.length; i++){
-                indexAndAddress[i] = db.data.addresses[i].index +" "+db.data.addresses[i].ecashAddress
+        if(program.rawArgs[2] === "-a" || program.rawArgs[2] === "--allAddresses" || program.rawArgs[3] === "-a" || program.rawArgs[3] === "--allAddresses"){
+            log("executed with -a option")
+
+            const options = [{
+                name: "sender",
+                type: "checkbox",
+                message: "From which addresses do you want to send the funds?: ",
+                choices: indexAndAddress
+            },
+            {
+                name: "receiver",
+                type: "input",
+                message: "Write eCash address of receiver:"
+            },
+            {
+                name: "amountOfXec",
+                type: "input",
+                message: "Amount of xec for sending:"
+            },
+            {
+                name: "password",
+                type: "password",
+                message: "Password to confirm broadcasting:"
             }
+            ]
+            const result = await inquirer.prompt(options)
+            
+            const {amountOfXec,receiver, password} = result
+            if(receiver.length !== 48){
+                log("You must enter an valid eCash address")
+                return
+            }
+
+            if(Number(amountOfXec) < 5.5){
+                log("you can only send amounts greater than 5.5")
+                return
+            }
+            const wallets = []
+
+            let txBuilder = utxolib.bitgo.createTransactionBuilderForNetwork(
+                utxolib.networks.ecash,
+            );
+
+            const utxosLogic = []
+            const allUtxos = []
+            let utxosLengthSumed = 0
+
+            let concatenatedUtxos = []
+            const utxosECPair = []
+            // ** Part 1 - Convert user input into satoshis **
+    
+            // Convert the XEC amount to satoshis
+            // Note: 'Number' type is used throughout this example in favour
+            // of BigInt as XEC amounts can have decimals
+            let sendAmountInSats = convertXecToSatoshis(amountOfXec);
+
+            for(let i=0; i<result.sender.length; i++){
+                const sender = result.sender[i]
+                log("sender: ", sender)
+                const indexAndAddressSelected = sender.split(" ")
+                
+                const index = indexAndAddressSelected[0]
+                const eCashAddress = indexAndAddressSelected[1]
+
+                const decryptedMnemonic = decryptMnemonic(encryptedMnemonic, ivBuffer, password)
+            
+                wallets[i] = await deriveWallet(decryptedMnemonic, derivationPath, eCashAddress, index)
+                log("wallets: ", wallets)
+                utxosLogic[i] = await getUtxosFromAddress(
+                    chronik,
+                    wallets[i].address,
+                );
+                if(utxosLogic[i][0] !== undefined){
+                    const {utxos} = utxosLogic[i][0]
+                    const utxosNumber = utxos.length
+                    log("utxosNumber: ",utxosNumber)
+                    allUtxos[i] = utxos
+                
+                        
+                    log("utxos: ",utxos)
+                    utxosLengthSumed += allUtxos.length
+
+                    concatenatedUtxos = concatenatedUtxos.concat(allUtxos[i])
+                    for(let n = 0; n<utxosNumber;n++){
+                        utxosECPair[i] = utxolib.ECPair.fromWIF(
+                            wallets[n].fundingWif,
+                            utxolib.networks.ecash,
+                        );
+                        log("utxosECPair[i]: ", utxosECPair[i])
+                    }
+                    
+                }
+                
+            }
+            log("concatenatedUtxos: ", concatenatedUtxos)
+            const targetOutputs = [
+            {
+                value: sendAmountInSats,
+                address: receiver,
+            },
+            ];
+
+            // Call on ecash-coinselect to select enough XEC utxos and outputs inclusive of change
+            let { inputs, outputs } = coinSelect(concatenatedUtxos, targetOutputs);
+
+            log("inputs: ", inputs)
+            log("outputs: ", outputs)
+            //let { inputs:inputs2 } = coinSelect(utxos2, targetOutputs);
+            // Add the selected xec utxos to the tx builder as inputs
+            for (const input of inputs) {
+                txBuilder.addInput(input.outpoint.txid, input.outpoint.outIdx);
+            }
+            /* for (const input of inputs2) {
+                txBuilder.addInput(input.outpoint.txid, input.outpoint.outIdx);
+            } */
+            // ** Part 4. Generate the tx outputs **
+
+            for (const output of outputs) {
+                if (!output.address) {
+                    // Note that you may now have a change output with no specified address
+                    // This is expected behavior of coinSelect
+                    // User provides target output, coinSelect adds change output if necessary (with no address key)
+
+                    // Change address is wallet address
+                    output.address = wallets[0].address;
+                }
+
+                txBuilder.addOutput(
+                    // utxo-lib's txBuilder currently only interacts with the legacy address
+                    // TODO add cashaddr support for eCash to txBuilder in utxo-lib
+                    ecashaddr.toLegacy(output.address),
+                    output.value,
+                );
+            }
+
+
+            // Loop through all the collected XEC input utxos
+            for (let i = 0; i < inputs.length; i++) {
+                const thisUtxo = inputs[i];
+                log("utxosECPair[i]: ",utxosECPair[i])
+                // Sign this tx
+                
+                txBuilder.sign(
+                    i, // vin
+                    utxosECPair[i], // keyPair
+                    undefined, // redeemScript, typically used for P2SH addresses
+                    HASHTYPES.SIGHASH_ALL | HASHTYPES.SIGHASH_FORKID, // hashType
+                    parseInt(thisUtxo.value), // value of this single utxo
+                );
+            }
+
+            // ** Part 6. Build the transaction **
+
+            const tx = txBuilder.build();
+            // Convert to raw hex for use in chronik
+            const hex = tx.toHex();
+            log("hex: ",hex)
+            // ** Part 7. Broadcast raw hex to the network via chronik **
+
+            // Example successful chronik.broadcastTx() response:
+            //    {"txid":"0075130c9ecb342b5162bb1a8a870e69c935ea0c9b2353a967cda404401acf19"}
+            const response = await chronik.broadcastTx(hex);
+            if (!response) {
+                throw new Error('sendXec(): Empty chronik broadcast response');
+            } 
+            /* log("hex: ",hex)
+            await axios.post('https://ecash.badger.cash:8332/broadcast', {
+                tx: hex
+            }); */
+            //log(broadcast.status)
+            return { hex };
+        }
+        
+        try {
 
             const options = [
                 {
@@ -71,10 +248,7 @@ class Set {
                 log("you can only send amounts greater than 5.5")
                 return
             }
-            const dbAccount = await getConnection("account")
-            const ivData = dbAccount.data.account[0].iv.data
-            const ivBuffer = Buffer.from(ivData);
-            const encryptedMnemonic = dbAccount.data.account[0].mnemonic
+            
 
 
             
@@ -121,7 +295,7 @@ class Set {
                     address: receiver,
                 },
             ];
-
+            log("utxos: ", utxos)
             // Call on ecash-coinselect to select enough XEC utxos and outputs inclusive of change
             let { inputs, outputs } = coinSelect(utxos, targetOutputs);
             
@@ -187,9 +361,9 @@ class Set {
                 throw new Error('Empty chronik broadcast response');
             }
 
-            return { hex, response };
+            log("txid: ",response.txid) 
         } catch (err) {
-            console.log(`Error sending XEC transaction: `, err);
+            log(`Error sending XEC transaction: `, err);
             throw err;
         }
     }
