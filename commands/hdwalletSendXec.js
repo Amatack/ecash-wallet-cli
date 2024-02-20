@@ -12,6 +12,7 @@ const { log, chronikInstance, derivationPath } = require('../configs/constants.j
 const convertXecToSatoshis = require('../utils/convertXecToSatoshis.js')
 const getUtxosFromAddress = require('../utils/getUtxosFromAddress.js')
 const { decryptMnemonic , deriveWallet} = require('../utils/utils.js');
+const convertNumber = require('../utils/convertNumber.js');
 
 
 class Set {
@@ -76,11 +77,12 @@ class Set {
             let txBuilder = utxolib.bitgo.createTransactionBuilderForNetwork(
                 utxolib.networks.ecash,
             );
-
+            //no need to select index or wallet
+            const walletsUtxosNumber = []
             const utxosLogic = []
             const allUtxos = []
-            let utxosLengthSumed = 0
-
+            
+            let utxosValueToUse = 0
             let concatenatedUtxos = []
             const utxosECPair = []
             // ** Part 1 - Convert user input into satoshis **
@@ -89,10 +91,11 @@ class Set {
             // Note: 'Number' type is used throughout this example in favour
             // of BigInt as XEC amounts can have decimals
             let sendAmountInSats = convertXecToSatoshis(amountOfXec);
-
+            
             for(let i=0; i<result.sender.length; i++){
+                //select each address due interaction 
                 const sender = result.sender[i]
-                log("sender: ", sender)
+                //log("sender: ", sender)
                 const indexAndAddressSelected = sender.split(" ")
                 
                 const index = indexAndAddressSelected[0]
@@ -106,29 +109,40 @@ class Set {
                     chronik,
                     wallets[i].address,
                 );
+                
+                //empty address
                 if(utxosLogic[i][0] !== undefined){
                     const {utxos} = utxosLogic[i][0]
                     const utxosNumber = utxos.length
                     log("utxosNumber: ",utxosNumber)
+                    //walletsUtxosNumber[i] = utxosNumber
+
                     allUtxos[i] = utxos
                 
                         
-                    log("utxos: ",utxos)
-                    utxosLengthSumed += allUtxos.length
+                    //log("utxos: ",utxos)
 
                     concatenatedUtxos = concatenatedUtxos.concat(allUtxos[i])
-                    for(let n = 0; n<utxosNumber;n++){
-                        utxosECPair[i] = utxolib.ECPair.fromWIF(
-                            wallets[n].fundingWif,
-                            utxolib.networks.ecash,
-                        );
-                        log("utxosECPair[i]: ", utxosECPair[i])
-                    }
+                    
+                        for(let n = 0; n<utxosNumber;n++){
+                            log("amountOfXec: ", amountOfXec)
+                            log("utxosValueToUse: ", utxosValueToUse)
+                            if(amountOfXec > utxosValueToUse){
+                                // i represents each wallet and n represents each utxo
+                                let xecWithDecimal = convertNumber(Number(allUtxos[i][n].value))
+                                utxosValueToUse += Number(xecWithDecimal)
+                                utxosECPair[utxosECPair.length+n] = utxolib.ECPair.fromWIF(
+                                    wallets[i].fundingWif,
+                                    utxolib.networks.ecash,
+                                );
+                                //It is better to see all the values of the array by log function
+                                log("utxosECPair: ", utxosECPair)
+                            }else break
+                        }
                     
                 }
-                
             }
-            log("concatenatedUtxos: ", concatenatedUtxos)
+            
             const targetOutputs = [
             {
                 value: sendAmountInSats,
@@ -140,7 +154,6 @@ class Set {
             let { inputs, outputs } = coinSelect(concatenatedUtxos, targetOutputs);
 
             log("inputs: ", inputs)
-            log("outputs: ", outputs)
             //let { inputs:inputs2 } = coinSelect(utxos2, targetOutputs);
             // Add the selected xec utxos to the tx builder as inputs
             for (const input of inputs) {
@@ -173,7 +186,7 @@ class Set {
             // Loop through all the collected XEC input utxos
             for (let i = 0; i < inputs.length; i++) {
                 const thisUtxo = inputs[i];
-                log("utxosECPair[i]: ",utxosECPair[i])
+                //log("utxosECPair[i]: ",utxosECPair[i])
                 // Sign this tx
                 
                 txBuilder.sign(
