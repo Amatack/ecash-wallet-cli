@@ -95,7 +95,7 @@ class Set {
             for(let i=0; i<result.sender.length; i++){
                 //select each address due interaction 
                 const sender = result.sender[i]
-                //log("sender: ", sender)
+                log("sender: ", sender)
                 const indexAndAddressSelected = sender.split(" ")
                 
                 const index = indexAndAddressSelected[0]
@@ -123,22 +123,33 @@ class Set {
                     //log("utxos: ",utxos)
 
                     concatenatedUtxos = concatenatedUtxos.concat(allUtxos[i])
-                    
+                    log("Wallets used for this transaction: ")
                         for(let n = 0; n<utxosNumber;n++){
-                            log("amountOfXec: ", amountOfXec)
-                            log("utxosValueToUse: ", utxosValueToUse)
+                            //log("amountOfXec: ", amountOfXec)
+                            //log("utxosValueToUse: ", utxosValueToUse)
                             if(amountOfXec > utxosValueToUse){
                                 // i represents each wallet and n represents each utxo
                                 let xecWithDecimal = convertNumber(Number(allUtxos[i][n].value))
                                 utxosValueToUse += Number(xecWithDecimal)
-                                utxosECPair[utxosECPair.length+n] = utxolib.ECPair.fromWIF(
+                                //talvez no se ejecuta cuando hay 3 utxos, debido a q el tercero no es necesario
+                                //log("utxosECPair.length: ", utxosECPair.length )
+                                if(utxosECPair.length === 0){
+                                    utxosECPair[0] = utxolib.ECPair.fromWIF(
                                     wallets[i].fundingWif,
                                     utxolib.networks.ecash,
-                                );
+                                    );
+                                }else{
+                                    utxosECPair[utxosECPair.length] = utxolib.ECPair.fromWIF(
+                                        wallets[i].fundingWif,
+                                        utxolib.networks.ecash,
+                                        );
+                                }
+                                log(wallets[i].address)
                                 //It is better to see all the values of the array by log function
-                                log("utxosECPair: ", utxosECPair)
+                                
                             }else break
                         }
+                        log("Final Result of utxosECPair: ", utxosECPair)
                     
                 }
             }
@@ -186,7 +197,7 @@ class Set {
             // Loop through all the collected XEC input utxos
             for (let i = 0; i < inputs.length; i++) {
                 const thisUtxo = inputs[i];
-                //log("utxosECPair[i]: ",utxosECPair[i])
+                log("utxosECPair[i]: ",utxosECPair[i])
                 // Sign this tx
                 
                 txBuilder.sign(
@@ -262,9 +273,6 @@ class Set {
                 return
             }
             
-
-
-            
             const decryptedMnemonic = decryptMnemonic(encryptedMnemonic, ivBuffer, password)
             
             const wallet = await deriveWallet(decryptedMnemonic, derivationPath, sender, index)
@@ -310,7 +318,7 @@ class Set {
             ];
             log("utxos: ", utxos)
             // Call on ecash-coinselect to select enough XEC utxos and outputs inclusive of change
-            let { inputs, outputs } = coinSelect(utxos, targetOutputs);
+            let { inputs, outputs } = coinSelect( utxos , targetOutputs);
             
             // Add the selected xec utxos to the tx builder as inputs
             for (const input of inputs) {
