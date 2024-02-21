@@ -77,6 +77,8 @@ class Set {
             let txBuilder = utxolib.bitgo.createTransactionBuilderForNetwork(
                 utxolib.networks.ecash,
             );
+
+            
             //no need to select index or wallet
             const walletsUtxosNumber = []
             const utxosLogic = []
@@ -91,11 +93,11 @@ class Set {
             // Note: 'Number' type is used throughout this example in favour
             // of BigInt as XEC amounts can have decimals
             let sendAmountInSats = convertXecToSatoshis(amountOfXec);
-            
+            log("Wallets used for this transaction: ")
             for(let i=0; i<result.sender.length; i++){
                 //select each address due interaction 
                 const sender = result.sender[i]
-                log("sender: ", sender)
+                //log("sender: ", sender)
                 const indexAndAddressSelected = sender.split(" ")
                 
                 const index = indexAndAddressSelected[0]
@@ -104,7 +106,7 @@ class Set {
                 const decryptedMnemonic = decryptMnemonic(encryptedMnemonic, ivBuffer, password)
             
                 wallets[i] = await deriveWallet(decryptedMnemonic, derivationPath, eCashAddress, index)
-                log("wallets: ", wallets)
+                //log("wallets: ", wallets)
                 utxosLogic[i] = await getUtxosFromAddress(
                     chronik,
                     wallets[i].address,
@@ -114,16 +116,15 @@ class Set {
                 if(utxosLogic[i][0] !== undefined){
                     const {utxos} = utxosLogic[i][0]
                     const utxosNumber = utxos.length
-                    log("utxosNumber: ",utxosNumber)
                     //walletsUtxosNumber[i] = utxosNumber
 
                     allUtxos[i] = utxos
                 
                         
                     //log("utxos: ",utxos)
-
+                    let showWalletUsed = true
                     concatenatedUtxos = concatenatedUtxos.concat(allUtxos[i])
-                    log("Wallets used for this transaction: ")
+                    
                         for(let n = 0; n<utxosNumber;n++){
                             //log("amountOfXec: ", amountOfXec)
                             //log("utxosValueToUse: ", utxosValueToUse)
@@ -131,25 +132,21 @@ class Set {
                                 // i represents each wallet and n represents each utxo
                                 let xecWithDecimal = convertNumber(Number(allUtxos[i][n].value))
                                 utxosValueToUse += Number(xecWithDecimal)
-                                //talvez no se ejecuta cuando hay 3 utxos, debido a q el tercero no es necesario
-                                //log("utxosECPair.length: ", utxosECPair.length )
-                                if(utxosECPair.length === 0){
-                                    utxosECPair[0] = utxolib.ECPair.fromWIF(
+                                
+                                utxosECPair[utxosECPair.length] = utxolib.ECPair.fromWIF(
                                     wallets[i].fundingWif,
                                     utxolib.networks.ecash,
                                     );
-                                }else{
-                                    utxosECPair[utxosECPair.length] = utxolib.ECPair.fromWIF(
-                                        wallets[i].fundingWif,
-                                        utxolib.networks.ecash,
-                                        );
-                                }
-                                log(wallets[i].address)
+                                    if(showWalletUsed === true){
+                                        log(wallets[i].address)
+                                    }
+                                    showWalletUsed = false
+                                
                                 //It is better to see all the values of the array by log function
                                 
                             }else break
                         }
-                        log("Final Result of utxosECPair: ", utxosECPair)
+                        //log("Final Result of utxosECPair: ", utxosECPair)
                     
                 }
             }
@@ -164,7 +161,6 @@ class Set {
             // Call on ecash-coinselect to select enough XEC utxos and outputs inclusive of change
             let { inputs, outputs } = coinSelect(concatenatedUtxos, targetOutputs);
 
-            log("inputs: ", inputs)
             //let { inputs:inputs2 } = coinSelect(utxos2, targetOutputs);
             // Add the selected xec utxos to the tx builder as inputs
             for (const input of inputs) {
@@ -197,7 +193,7 @@ class Set {
             // Loop through all the collected XEC input utxos
             for (let i = 0; i < inputs.length; i++) {
                 const thisUtxo = inputs[i];
-                log("utxosECPair[i]: ",utxosECPair[i])
+                //log("utxosECPair[i]: ",utxosECPair[i])
                 // Sign this tx
                 
                 txBuilder.sign(
@@ -212,9 +208,13 @@ class Set {
             // ** Part 6. Build the transaction **
 
             const tx = txBuilder.build();
+
+            const estimatedFee = tx.byteLength();
+            log('The estimated fee for this transaction is:', estimatedFee, 'satoshis');
+
             // Convert to raw hex for use in chronik
             const hex = tx.toHex();
-            log("hex: ",hex)
+            //log("hex: ",hex)
             // ** Part 7. Broadcast raw hex to the network via chronik **
 
             // Example successful chronik.broadcastTx() response:
@@ -223,12 +223,9 @@ class Set {
             if (!response) {
                 throw new Error('sendXec(): Empty chronik broadcast response');
             } 
-            /* log("hex: ",hex)
-            await axios.post('https://ecash.badger.cash:8332/broadcast', {
-                tx: hex
-            }); */
-            //log(broadcast.status)
-            return { hex };
+            
+            log("txid: ", response.txid)
+            return
         }
         
         try {
@@ -316,7 +313,7 @@ class Set {
                     address: receiver,
                 },
             ];
-            log("utxos: ", utxos)
+            //log("utxos: ", utxos)
             // Call on ecash-coinselect to select enough XEC utxos and outputs inclusive of change
             let { inputs, outputs } = coinSelect( utxos , targetOutputs);
             
@@ -370,6 +367,8 @@ class Set {
             // ** Part 6. Build the transaction **
 
             const tx = txBuilder.build();
+            const estimatedFee = tx.byteLength();
+            log('The estimated fee for this transaction is:', estimatedFee, 'satoshis');
             // Convert to raw hex for use in chronik
             const hex = tx.toHex();
 
