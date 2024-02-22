@@ -16,11 +16,15 @@ mkdir data
 hdwallet
 ```
 
-## Running eCash Wallet
+## Running Your First eCash Wallet from CLI
 
 
 ```
-$ hdwallet
+hdwallet start generate
+
+```
+
+## Commands of general purpose
 Usage: hdwallet [options] [command]
 
 eCash Wallet CLI v0.0.1
@@ -37,6 +41,6 @@ Commands:
   totalAddresses      Total number of addresses generated and registered.
   sendXec             send eCash from your selected address
   help [command]      display help for command
-```
+
 
 
