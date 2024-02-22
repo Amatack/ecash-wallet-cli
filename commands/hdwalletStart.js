@@ -38,9 +38,9 @@ class Set {
             fs.unlinkSync(filePath);
             fs.unlinkSync(filePath2);
             
-        } else {
+        } /* else {
             log('JSON file does not exist.');
-        }
+        } */
         
 
         const dbAccount = await getConnection("account")
