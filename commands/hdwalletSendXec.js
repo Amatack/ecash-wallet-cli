@@ -29,7 +29,7 @@ class Set {
         const ivData = dbAccount.data.account[0].iv.data
         const ivBuffer = Buffer.from(ivData);
         const encryptedMnemonic = dbAccount.data.account[0].mnemonic
-        const indexAndAddress = []  
+        const indexAndAddress = []
 
         for(let i = 0; i < dbAddresses.data.addresses.length; i++){
             indexAndAddress[i] = dbAddresses.data.addresses[i].index +" "+dbAddresses.data.addresses[i].ecashAddress
@@ -270,6 +270,8 @@ class Set {
             
             const decryptedMnemonic = decryptMnemonic(encryptedMnemonic, ivBuffer, password)
             
+            //log("decryptedMnemonic: ", decryptedMnemonic)
+
             const wallet = await deriveWallet(decryptedMnemonic, derivationPath, sender, index)
             
             // In JS, Number.MAX_SAFE_INTEGER = 9007199254740991. Since total supply of
