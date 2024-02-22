@@ -10,9 +10,9 @@ program
     //.action(set.addPlayer)
 
 program
-    .command('enter')
-    .description('Enter Mnemonic and set it as default every time you use this wallet')
-    .action(()=> console.log('Enter Mnemonic and set it as default every time you use this wallet'))
+    .command('import')
+    .description('Import Mnemonic and set it as default every time you use this wallet')
+    .action(set.import)
     //.action(set.removePlayer)
 
 program

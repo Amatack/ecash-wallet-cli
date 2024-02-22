@@ -79,8 +79,6 @@ class Set {
             );
 
             
-            //no need to select index or wallet
-            const walletsUtxosNumber = []
             const utxosLogic = []
             const allUtxos = []
             
@@ -93,7 +91,7 @@ class Set {
             // Note: 'Number' type is used throughout this example in favour
             // of BigInt as XEC amounts can have decimals
             let sendAmountInSats = convertXecToSatoshis(amountOfXec);
-            log("Wallets used for this transaction: ")
+            log("Sender addresses used for this transaction: ")
             for(let i=0; i<result.sender.length; i++){
                 //select each address due interaction 
                 const sender = result.sender[i]
