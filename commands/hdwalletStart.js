@@ -35,11 +35,8 @@ class Set {
             if(mnemonicChange.confirm === false) return
 
             
-            
-                
             fs.unlinkSync(filePath);
             fs.unlinkSync(filePath2);
-            log('The JSON file has been successfully deleted.');
             
         } else {
             log('JSON file does not exist.');
@@ -99,9 +96,7 @@ class Set {
         let encryptedMnemonic = cipher.update(mnemonic, 'utf8', 'hex');
         encryptedMnemonic += cipher.final('hex');
 
-        log("Your encrypted mnemonic is " + encryptedMnemonic)
-        
-        console.log("Create new wallet ")
+        //log("Your encrypted mnemonic is " + encryptedMnemonic)
 
         const bip32 = BIP32Factory(ecc);
         const seedBuffer = bip39.mnemonicToSeedSync(mnemonic)
@@ -121,7 +116,7 @@ class Set {
         let decryptedMnemonic = decipher.update(encryptedMnemonic, 'hex', 'utf8');
         decryptedMnemonic += decipher.final('utf8');
 
-        console.log("Your decrypted mnemonic is " + decryptedMnemonic);
+        //console.log("Your decrypted mnemonic is " + decryptedMnemonic);
 
         const masterKey = bip32.fromSeed(seedBuffer)
         const initialDerivationPath = derivationPath
@@ -134,6 +129,7 @@ class Set {
         const ecashAddress = ecashaddrjs.encode("ecash", "P2PKH" , uint8array)
         
         await dbAddresses.update(({ addresses }) => addresses.push({index: 0,ecashAddress:ecashAddress}))
+        log("Success, new wallet created")
     };
     import = ()=>{
         log("import mnemonic")
