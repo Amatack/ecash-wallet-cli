@@ -1,9 +1,9 @@
 # eCash wallet CLI
 
-eCash hdwallet:
-hold and send eCash.
-manage your balance from different addresses.
-Select all the addresses you want to use for a single payment.
+eCash hdwallet:  
+hold and send eCash.  
+manage your balance from different addresses.  
+Select all the addresses you want to use for a single payment.  
 
 ## Installing eCash Wallet
 
