@@ -1,6 +1,6 @@
 {
     "name": "ecash-coinselect2",
-    "version": "2.0.3",
+    "version": "0.0.1",
     "description": "An unspent transaction output (UTXO) selection module for eCash.",
     "main": "index.js",
     "scripts": {
@@ -20,7 +20,6 @@
     ],
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/Bitcoin-ABC/bitcoin-abc.git",
         "directory": "modules/ecash-coinselect"
     },
     "bugs": {

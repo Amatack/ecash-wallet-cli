@@ -1,6 +1,6 @@
 {
   "name": "@bitgo/blake2b2",
-  "version": "3.2.4",
+  "version": "0.0.1",
   "description": "Blake2b (64-bit version) in pure JavaScript",
   "main": "index.js",
   "dependencies": {
@@ -18,7 +18,6 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/BitGo/BitGoJS.git",
     "directory": "modules/blake2b"
   },
   "keywords": [],

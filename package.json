@@ -45,5 +45,8 @@
     "uint8arrays": "^5.0.0",
     "uuid": "^9.0.1",
     "varuint-bitcoin": "^1.1.2"
+  },
+  "repository":{
+    "url": "https://github.com/Amatack/ecash-wallet-cli"
   }
 }
