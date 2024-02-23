@@ -9,7 +9,8 @@
     "hdwallet-start": "./bin/hdwalletStart.js"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "postinstall": "mkdir data"
   },
   "author": "Amatack",
   "license": "ISC",
