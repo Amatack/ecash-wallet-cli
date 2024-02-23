@@ -1,5 +1,5 @@
 {
-    "name": "ecash-coinselect",
+    "name": "ecash-coinselect2",
     "version": "2.0.3",
     "description": "An unspent transaction output (UTXO) selection module for eCash.",
     "main": "index.js",
