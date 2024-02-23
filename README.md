@@ -15,7 +15,6 @@ Select all the addresses you want to use for a single payment.
 git clone https://github.com/Amatack/ecash-wallet-cli.git
 cd ./ecash-wallet-cli
 npm install
-mkdir data
 hdwallet
 ```
 
