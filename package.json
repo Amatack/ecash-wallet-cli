@@ -5,8 +5,8 @@
   "main": "index.js",
   "type": "commonjs",
   "bin": {
-    "hdwallet": "./bin/hdwallet.js",
-    "hdwallet-start": "./bin/hdwalletStart.js"
+    "hdwallet": "bin/hdwallet.js",
+    "hdwallet-start": "bin/hdwalletStart.js"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
