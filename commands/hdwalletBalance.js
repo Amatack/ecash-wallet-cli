@@ -51,7 +51,7 @@ class Set {
             {
                 name: "address",
                 type: "list",
-                message: "Select one wallet: ",
+                message: "Select one Address: ",
                 choices: indexAndAddress
             }
         ]
