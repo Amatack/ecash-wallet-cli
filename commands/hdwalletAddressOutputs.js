@@ -64,43 +64,69 @@ class Set {
         
         const result3 = await inquirer.prompt(options3)
 
-        if(result3.tokenId === ""){
-            log("All the ecash outputs")
-            return
-        }
         const arrays = [];
         for(let n = 0;;n++){
             const addressHistory = await chronik.script(type, hash).history(n)
             if(addressHistory.txs.length === 0){
                 break
             }else{
-                for(let n2 = 0; n2 < addressHistory.txs.length; n2++){
-                    if(addressHistory.txs[n2].slpTxData){
-                        if(addressHistory.txs[n2].slpTxData.slpMeta.tokenId === result3.tokenId) {
-                            //log("addressHistory.txs[n2].outputs: ", addressHistory.txs[n2].outputs)
+                //For eCash outputs
+                if(result3.tokenId === ""){
+
+                    for(let n2 = 0; n2 < addressHistory.txs.length; n2++){
+                        
+                        if(!addressHistory.txs[n2].slpTxData){
                             for(let n3= 0; n3 < addressHistory.txs[n2].outputs.length; n3++){
-                                if(addressHistory.txs[n2].outputs[n3].slpToken !== undefined){
-                                    
-                                    addressHistory.txs[n2].outputs[n3].time = addressHistory.txs[n2].block.timestamp
-                                    arrays.push(addressHistory.txs[n2].outputs[n3]);
-                                }
+                                addressHistory.txs[n2].outputs[n3].time = addressHistory.txs[n2].block.timestamp
+                                arrays.push(addressHistory.txs[n2].outputs[n3]);
                             }
                         }
                     }
                     
+                }else{
+                    //For eToken outputs
+                    for(let n2 = 0; n2 < addressHistory.txs.length; n2++){
+                        if(addressHistory.txs[n2].slpTxData){
+                            if(addressHistory.txs[n2].slpTxData.slpMeta.tokenId === result3.tokenId) {
+                                //log("addressHistory.txs[n2].outputs: ", addressHistory.txs[n2].outputs)
+                                for(let n3= 0; n3 < addressHistory.txs[n2].outputs.length; n3++){
+                                    if(addressHistory.txs[n2].outputs[n3].slpToken !== undefined){
+                                        
+                                        addressHistory.txs[n2].outputs[n3].time = addressHistory.txs[n2].block.timestamp
+                                        arrays.push(addressHistory.txs[n2].outputs[n3]);
+                                    }
+                                }
+                            }
+                        }
+                        
+                    }
                 }
             }
         }
         const totalOutputs = [].concat(...arrays);
 
         const totalOutputsFiltered = []
+        
+
+       
 
         for(let n4 = 0; n4 < totalOutputs.length ;n4++){
+
+            let amount = ""
+            
+            if(result3.tokenId === ""){
+                //For eCash outputs
+                amount = totalOutputs[n4].value
+            }else{
+                //For eToken outputs
+                amount = totalOutputs[n4].slpToken.amount
+            }
+
             const date = new Date(totalOutputs[n4].time*1000)
             const outputFiltered = {
                 dateLocal: date.toLocaleDateString() + " " + date.toLocaleTimeString(),
                 address: await getAddressFromOutputScript(totalOutputs[n4].outputScript),
-                amount: totalOutputs[n4].slpToken.amount
+                amount
             }
             if(eCashAddress !== outputFiltered.address){
                 totalOutputsFiltered[totalOutputsFiltered.length] = outputFiltered
