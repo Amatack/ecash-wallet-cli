@@ -7,10 +7,6 @@ Select all the addresses you want to use for a single payment.
 
 ## Installing eCash Wallet
 
-...
-
-## Cloning eCash Wallet
-
 ```
 git clone https://github.com/Amatack/ecash-wallet-cli.git
 cd ./ecash-wallet-cli

@@ -124,7 +124,7 @@ class Set {
 
             const date = new Date(totalOutputs[n4].time*1000)
             const outputFiltered = {
-                dateLocal: date.toLocaleDateString() + " " + date.toLocaleTimeString(),
+                localDate: date.toLocaleDateString() + " " + date.toLocaleTimeString(),
                 address: await getAddressFromOutputScript(totalOutputs[n4].outputScript),
                 amount
             }
