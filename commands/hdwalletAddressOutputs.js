@@ -76,9 +76,13 @@ class Set {
                     for(let n2 = 0; n2 < addressHistory.txs.length; n2++){
                         
                         if(!addressHistory.txs[n2].slpTxData){
+                            //console.log("addressHistory.txs[n2]: ",addressHistory.txs[n2])
                             for(let n3= 0; n3 < addressHistory.txs[n2].outputs.length; n3++){
-                                addressHistory.txs[n2].outputs[n3].time = addressHistory.txs[n2].block.timestamp
-                                arrays.push(addressHistory.txs[n2].outputs[n3]);
+                                if(!addressHistory.txs[n2].outputs[n3].slpBurn && !addressHistory.txs[n2].outputs[n3].slpToken){
+                                    addressHistory.txs[n2].outputs[n3].time = addressHistory.txs[n2].block.timestamp
+                                    arrays.push(addressHistory.txs[n2].outputs[n3]);
+                                }
+                                
                             }
                         }
                     }
@@ -111,7 +115,6 @@ class Set {
        
 
         for(let n4 = 0; n4 < totalOutputs.length ;n4++){
-
             let amount = ""
             
             if(result3.tokenId === ""){
@@ -121,15 +124,17 @@ class Set {
                 //For eToken outputs
                 amount = totalOutputs[n4].slpToken.amount
             }
-
-            const date = new Date(totalOutputs[n4].time*1000)
-            const outputFiltered = {
-                localDate: date.toLocaleDateString() + " " + date.toLocaleTimeString(),
-                address: await getAddressFromOutputScript(totalOutputs[n4].outputScript),
-                amount
-            }
-            if(eCashAddress !== outputFiltered.address){
-                totalOutputsFiltered[totalOutputsFiltered.length] = outputFiltered
+            let address = await getAddressFromOutputScript(totalOutputs[n4].outputScript)
+            if(address !== "Output without address"){
+                const date = new Date(totalOutputs[n4].time*1000)
+                const outputFiltered = {
+                    localDate: date.toLocaleDateString() + " " + date.toLocaleTimeString(),
+                    address,
+                    amount
+                }
+                if(eCashAddress !== outputFiltered.address){
+                    totalOutputsFiltered[totalOutputsFiltered.length] = outputFiltered
+                }
             }
         }
 
